@@ -1,0 +1,113 @@
+﻿@model IEnumerable<User>
+@{
+    ViewData["Title"] = "Employee Dashboard";
+}
+
+<button onclick="location.href='@Url.Action("Logout", "Home")'">Log out</button>
+
+<button onclick="location.href='@Url.Action("AddFarmer", "Home")'">Add Farmer</button>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f0f0f0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    button {
+        padding: 5px;
+        background-color: #008CBA;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        button:hover {
+            background-color: #0077A3;
+        }
+
+    h1 {
+        text-align: center;
+        color: #008CBA;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #008CBA;
+        color: white;
+    }
+
+    a {
+        color: #008CBA;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+    .message {
+        border: 1px solid red;
+        padding: 10px;
+        margin-top: 10px;
+        color: red;
+    }
+</style>
+
+
+<div class="text-center">
+    <h1 class="display-4">Farmers</h1>
+
+    @if (ViewBag.Message != null)
+    {
+        <p style="border: 1px solid red">
+            @ViewBag.Message
+        </p>
+    }
+
+    <table>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+
+            </th>
+        </tr>
+
+        @foreach (var farmer in Model)
+        {
+            <tr>
+                <td>
+                    @farmer.Name
+                </td>
+                <td>
+                    @farmer.Email
+                </td>
+                <td>
+                    <a asp-action="EmployeeFarmerView" asp-route-id="@farmer.UserId">View products</a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
