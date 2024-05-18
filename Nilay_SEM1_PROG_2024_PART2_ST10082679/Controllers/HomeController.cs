@@ -5,6 +5,7 @@ using Nilay_SEM1_PROG_2024_PART2_ST10082679.Context;
 using Nilay_SEM1_PROG_2024_PART2_ST10082679.Models;
 using Nilay_SEM1_PROG_2024_PART2_ST10082679.Helpers;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
 {
@@ -28,9 +29,9 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
              
                 using (AgriDbContext dbContext = new AgriDbContext())
                 {
-                var farmers = await dbContext.Users.Where(s => s.Role.Equals("farmer")).ToListAsync();
+                    var farmers = await dbContext.Users.Where(s => s.Role.Equals("farmer")).ToListAsync();
 
-                return View(farmers);
+                    return View(farmers);
                 }            
             }
             else
@@ -47,14 +48,14 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             //checks if user is logged in
             if (userId != null)
             {
-                //gets a list of the semesters associated with the userId 
-                //using (DBContext dbContext = new DBContext())
-                //{
-                //var semesters = await dbContext.Semesters.Where(s => s.UserId == Int32.Parse(userId)).ToListAsync();
+               
+                using (AgriDbContext dbContext = new AgriDbContext())
+                {
+                    var products = await dbContext.Products.Where(s => s.UserId == Int32.Parse(userId)).ToListAsync();
 
-                //return View(semesters);
-                //}
-                return View();
+                    return View(products);
+                }          
+                
             }
             else
             {
@@ -67,16 +68,29 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             //gets userId from the session 
             var userId = HttpContext.Session.GetString("UserId");
 
+
             //checks if user is logged in
             if (userId != null)
             {
-                //gets a list of the semesters associated with the userId 
-                //using (DBContext dbContext = new DBContext())
-                //{
-                //var semesters = await dbContext.Semesters.Where(s => s.UserId == Int32.Parse(userId)).ToListAsync();
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("LoginEmployee");
+            }
+        }
 
-                //return View(semesters);
-                //}
+        public async Task<IActionResult> AddProduct()
+        {
+            //gets userId from the session 
+            var userId = HttpContext.Session.GetString("UserId");
+
+            ViewBag.Categories = ProductCategories.items;
+
+
+            //checks if user is logged in
+            if (userId != null)
+            {
                 return View();
             }
             else
@@ -210,6 +224,37 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             return View(userObj);
         }
 
+        //--------------------------------------------------------------------------------------//
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AddProduct(Product productObj)
+        {
+            // Error handling to make sure the fields are filled out    
+            var userId = HttpContext.Session.GetString("UserId");
+
+            if (string.IsNullOrEmpty(productObj.Name) || string.IsNullOrEmpty(productObj.Category) || userId == null || productObj.ProductDate.Year <= 1731)
+            {
+                ViewBag.Message = "Please make sure both fields are filled out";
+                ViewBag.Categories = ProductCategories.items;
+                return View(productObj);
+            }
+
+
+            //intercats with database using dbcontext
+            using (AgriDbContext dbContext = new AgriDbContext())
+            {
+
+                productObj.UserId = Int32.Parse(userId);
+                //adds to database
+                await dbContext.Products.AddAsync(productObj);
+                await dbContext.SaveChangesAsync();
+
+                return RedirectToAction("FarmerDashboard");
+                
+            }
+
+        }
+        //--------------------------------------------------------------------------------------//
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> LoginEmployee(User userObj)

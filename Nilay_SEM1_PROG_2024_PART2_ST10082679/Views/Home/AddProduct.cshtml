@@ -1,0 +1,122 @@
+﻿@model Product
+@{
+    ViewData["Title"] = "Add Farmer";
+}
+
+<button onclick="location.href='@Url.Action("LogOut", "Home")'">Log out</button>
+
+<button onclick="location.href='@Url.Action("FarmerDashboard", "Home")'">Back to dashboard</button>
+
+
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f0f0f0;
+    }
+
+    fieldset {
+        width: 700px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #fff;
+    }
+
+    legend {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #008CBA;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        color: #008CBA;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        margin-top: 8px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            input[type="submit"]:hover {
+                background-color: #45a049;
+            }
+
+    button {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #008CBA;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        button:hover {
+            background-color: #0077A3;
+        }
+</style>
+
+@using (Html.BeginForm("AddProduct", "Home", FormMethod.Post))
+{
+    <fieldset>
+
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+
+        @if (ViewBag.Message != null)
+        {
+            <p style="border: 1px solid red">
+                @ViewBag.Message
+            </p>
+        }
+
+        
+
+        <table>
+
+            <tr>
+                <td>@Html.LabelFor(a => a.Name)</td>
+                <td>@Html.TextBoxFor(a => a.Name)</td>
+                <td>@Html.ValidationMessageFor(a => a.Name)</td>
+            </tr>
+
+            <tr>
+                <td>@Html.LabelFor(a => a.ProductDate)</td>
+                <td>@Html.TextBoxFor(a => a.ProductDate, new { type = "date" })</td>
+                <td>@Html.ValidationMessageFor(a => a.ProductDate)</td>
+            </tr>
+
+
+
+            <tr>
+                <td>@Html.LabelFor(a => a.Category)</td>
+                <td>@Html.DropDownListFor(a => a.Category, new SelectList(ViewBag.Categories as List<string>), "Select a category")            
+                <td>@Html.ValidationMessageFor(a => a.Category)</td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td><input type="submit" value="Add Product" /></td>
+                <td></td>
+            </tr>
+        </table>
+    </fieldset>
+}
