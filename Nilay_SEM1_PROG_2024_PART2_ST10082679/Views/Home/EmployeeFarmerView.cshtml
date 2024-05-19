@@ -1,0 +1,138 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewData["Title"] = "Employee Farmer View";
+}
+
+<button onclick="location.href='@Url.Action("Logout", "Home")'">Log out</button>
+
+<button onclick="location.href='@Url.Action("EmployeeDashboard", "Home")'">Back to dashboard</button>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f0f0f0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+
+    button {
+        padding: 5px;
+        background-color: #008CBA;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        button:hover {
+            background-color: #0077A3;
+        }
+
+    h1 {
+        text-align: center;
+        color: #008CBA;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #008CBA;
+        color: white;
+    }
+
+    a {
+        color: #008CBA;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+    .message {
+        border: 1px solid red;
+        padding: 10px;
+        margin-top: 10px;
+        color: red;
+    }
+</style>
+
+
+<div class="text-center">
+    <h1 class="display-4">Products for farmer</h1>
+
+    @if (ViewBag.Message != null)
+    {
+        <p style="border: 1px solid red">
+            @ViewBag.Message
+        </p>
+    }
+
+    @using (Html.BeginForm("FilterTable", "Home", FormMethod.Get))
+    {
+        <fieldset>
+
+            Category
+
+            @Html.DropDownList("Category", new SelectList(ViewBag.Categories as List<string>), "Select a category")
+
+            Start Date Range
+
+            @Html.TextBox("StartDate", null, new { type = "date" })
+
+            End Date Range
+
+            @Html.TextBox("EndDate", null, new { type = "date" })
+
+            <p>
+                <input type="submit" value="Filter" style="margin-top: 40px;" />
+            </p>
+
+        </fieldset>
+
+    }
+
+    <table>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Production Date
+            </th>
+            <th>
+                Category
+            </th>
+        </tr>
+
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>
+                    @product.Name
+                </td>
+                <td>
+                    @product.ProductDate
+                </td>
+                <td>
+                    @product.Category
+                </td>
+            </tr>
+        }
+    </table>
+</div>

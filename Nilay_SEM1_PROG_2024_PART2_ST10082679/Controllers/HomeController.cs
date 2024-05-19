@@ -6,6 +6,8 @@ using Nilay_SEM1_PROG_2024_PART2_ST10082679.Models;
 using Nilay_SEM1_PROG_2024_PART2_ST10082679.Helpers;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Diagnostics.Eventing.Reader;
+using Microsoft.AspNetCore.Http;
 
 namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
 {
@@ -29,6 +31,13 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
              
                 using (AgriDbContext dbContext = new AgriDbContext())
                 {
+                    // check role access
+                    var userIsEmployee = await dbContext.Users.Where(s => s.UserId == Int32.Parse(userId) && s.Role.Equals("employee")).FirstOrDefaultAsync();
+                    if (userIsEmployee == null)
+                    {
+                        return RedirectToAction("FarmerDashboard");
+                    }
+
                     var farmers = await dbContext.Users.Where(s => s.Role.Equals("farmer")).ToListAsync();
 
                     return View(farmers);
@@ -51,6 +60,13 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                
                 using (AgriDbContext dbContext = new AgriDbContext())
                 {
+                    // check role access
+                    var userIsFarmer = await dbContext.Users.Where(s => s.UserId == Int32.Parse(userId) && s.Role.Equals("farmer")).FirstOrDefaultAsync();
+                    if (userIsFarmer == null)
+                    {
+                        return RedirectToAction("EmployeeDashboard");
+                    }
+
                     var products = await dbContext.Products.Where(s => s.UserId == Int32.Parse(userId)).ToListAsync();
 
                     return View(products);
@@ -62,21 +78,122 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                 return RedirectToAction("LoginEmployee");
             }
         }
+        //--------------------------------------------------------------------------------------//
+        public async Task<IActionResult> EmployeeFarmerView(int id)
+        {
+            //gets userId from the session 
+            var userId = HttpContext.Session.GetString("UserId");
+            HttpContext.Session.SetString("FarmerUserId", id.ToString());
+            ViewBag.Categories = ProductCategories.items;
 
+            var category = HttpContext.Session.GetString("Category");
+            var startDate = HttpContext.Session.GetString("StartDate");
+            var endDate = HttpContext.Session.GetString("EndDate");
+
+            //checks if user is logged in
+            if (userId != null)
+            {
+
+                using (AgriDbContext dbContext = new AgriDbContext())
+                {
+
+                    // check role access
+                    var userIsEmployee = await dbContext.Users.Where(s => s.UserId == Int32.Parse(userId) && s.Role.Equals("employee")).FirstOrDefaultAsync();
+                    if (userIsEmployee == null)
+                    {
+                        return RedirectToAction("FarmerDashboard");
+                    }
+
+                    var query = dbContext.Products.Where(s => s.UserId == id);
+
+                    if (category != null)
+                    {
+                        query = query.Where(s => s.Category.Equals(category));
+                    }
+
+                    if (startDate != null && endDate != null)
+                    {
+                        var parsedStartDate = DateTime.Parse(startDate);
+                        var parsedEndDate = DateTime.Parse(endDate);
+
+                        if (parsedStartDate < parsedEndDate)
+                        {
+                            query = query.Where(s => s.ProductDate > parsedStartDate && s.ProductDate < parsedEndDate);
+                        }
+                    }
+
+                    var products = await query.ToListAsync();
+                    return View(products);
+
+                }
+
+            }
+            else
+            {
+                return RedirectToAction("LoginEmployee");
+            }
+        }
+
+        public IActionResult FilterTable(string Category, DateTime StartDate, DateTime EndDate)
+        {
+            //gets semesterId from session
+            var farmerUserId = HttpContext.Session.GetString("FarmerUserId");
+            ViewBag.Categories = ProductCategories.items;
+            //sets the week numer in the session
+
+            if (Category != null)
+            {
+                HttpContext.Session.SetString("Category", Category);
+            } else
+            {
+                HttpContext.Session.Remove("Category");
+            }
+
+            if (StartDate.Year >= 1731)
+            {
+                HttpContext.Session.SetString("StartDate", StartDate.ToString());
+            }
+            else
+            {
+                HttpContext.Session.Remove("StartDate");
+            }
+
+            if (EndDate.Year >= 1731)
+            {
+                HttpContext.Session.SetString("EndDate", EndDate.ToString());
+            }
+            else
+            {
+                HttpContext.Session.Remove("EndDate");
+            }
+
+            //goes to the semester dashboard with updated semesterId
+            return RedirectToAction("EmployeeFarmerView", new { Id = farmerUserId });
+        }
+
+        //--------------------------------------------------------------------------------------//
         public async Task<IActionResult> AddFarmer()
         {
             //gets userId from the session 
             var userId = HttpContext.Session.GetString("UserId");
 
-
-            //checks if user is logged in
-            if (userId != null)
+            using (AgriDbContext dbContext = new AgriDbContext())
             {
-                return View();
-            }
-            else
-            {
-                return RedirectToAction("LoginEmployee");
+                // check role access
+                var userIsEmployee = await dbContext.Users.Where(s => s.UserId == Int32.Parse(userId) && s.Role.Equals("employee")).FirstOrDefaultAsync();
+                if (userIsEmployee == null)
+                {
+                    return RedirectToAction("FarmerDashboard");
+                }
+                //checks if user is logged in
+                if (userId != null)
+                {
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("LoginEmployee");
+                }
             }
         }
 
@@ -86,16 +203,24 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             var userId = HttpContext.Session.GetString("UserId");
 
             ViewBag.Categories = ProductCategories.items;
-
-
-            //checks if user is logged in
-            if (userId != null)
+            using (AgriDbContext dbContext = new AgriDbContext())
             {
-                return View();
-            }
-            else
-            {
-                return RedirectToAction("LoginEmployee");
+                // check role access
+                var userIsFarmer = await dbContext.Users.Where(s => s.UserId == Int32.Parse(userId) && s.Role.Equals("farmer")).FirstOrDefaultAsync();
+                if (userIsFarmer == null)
+                {
+                    return RedirectToAction("EmployeeDashboard");
+                }
+
+                //checks if user is logged in
+                if (userId != null)
+                {
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("LoginEmployee");
+                }
             }
         }
         public IActionResult Register()
