@@ -14,12 +14,11 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
         }
-
+        //--------------------------------------------------------------------------------------//
         public async Task<IActionResult> EmployeeDashboard()
         {
             //gets userId from the session 
@@ -27,8 +26,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
 
             //checks if user is logged in
             if (userId != null)
-            {
-             
+            {    
                 using (AgriDbContext dbContext = new AgriDbContext())
                 {
                     // check role access
@@ -48,7 +46,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                 return RedirectToAction("LoginEmployee");
             }
         }
-
+        //--------------------------------------------------------------------------------------//
         public async Task<IActionResult> FarmerDashboard()
         {
             //gets userId from the session 
@@ -70,8 +68,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                     var products = await dbContext.Products.Where(s => s.UserId == Int32.Parse(userId)).ToListAsync();
 
                     return View(products);
-                }          
-                
+                }                         
             }
             else
             {
@@ -93,10 +90,8 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             //checks if user is logged in
             if (userId != null)
             {
-
                 using (AgriDbContext dbContext = new AgriDbContext())
                 {
-
                     // check role access
                     var userIsEmployee = await dbContext.Users.Where(s => s.UserId == Int32.Parse(userId) && s.Role.Equals("employee")).FirstOrDefaultAsync();
                     if (userIsEmployee == null)
@@ -121,19 +116,16 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                             query = query.Where(s => s.ProductDate > parsedStartDate && s.ProductDate < parsedEndDate);
                         }
                     }
-
                     var products = await query.ToListAsync();
                     return View(products);
-
                 }
-
             }
             else
             {
                 return RedirectToAction("LoginEmployee");
             }
         }
-
+        //--------------------------------------------------------------------------------------//
         public IActionResult FilterTable(string Category, DateTime StartDate, DateTime EndDate)
         {
             //gets semesterId from session
@@ -144,7 +136,8 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             if (Category != null)
             {
                 HttpContext.Session.SetString("Category", Category);
-            } else
+            }
+            else
             {
                 HttpContext.Session.Remove("Category");
             }
@@ -166,11 +159,9 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             {
                 HttpContext.Session.Remove("EndDate");
             }
-
             //goes to the semester dashboard with updated semesterId
             return RedirectToAction("EmployeeFarmerView", new { Id = farmerUserId });
         }
-
         //--------------------------------------------------------------------------------------//
         public async Task<IActionResult> AddFarmer()
         {
@@ -196,7 +187,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                 }
             }
         }
-
+        //--------------------------------------------------------------------------------------//
         public async Task<IActionResult> AddProduct()
         {
             //gets userId from the session 
@@ -211,7 +202,6 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                 {
                     return RedirectToAction("EmployeeDashboard");
                 }
-
                 //checks if user is logged in
                 if (userId != null)
                 {
@@ -223,9 +213,9 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                 }
             }
         }
+        //--------------------------------------------------------------------------------------//
         public IActionResult Register()
-        {
-            //if user is not logged in they can go to the register view 
+        { 
             if (HttpContext.Session.GetString("UserId") == null)
             {
                 return View();
@@ -235,7 +225,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                 return RedirectToAction("EmployeeDashboard");
             }
         }
-
+        //--------------------------------------------------------------------------------------//
         public IActionResult LoginEmployee()
         {
             if (HttpContext.Session.GetString("UserId") == null)
@@ -247,7 +237,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                 return RedirectToAction("EmployeeDashboard");
             }
         }
-
+        //--------------------------------------------------------------------------------------//
         public IActionResult LoginFarmer()
         {
             if (HttpContext.Session.GetString("UserId") == null)
@@ -259,18 +249,18 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                 return RedirectToAction("FarmerDashboard");
             }
         }
-
+        //--------------------------------------------------------------------------------------//
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
             return RedirectToAction("LoginEmployee");
         }
-
+        //--------------------------------------------------------------------------------------//
         public IActionResult Privacy()
         {
             return View();
         }
-
+        //--------------------------------------------------------------------------------------//
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(User userObj)
@@ -285,7 +275,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             using (AgriDbContext dbContext = new AgriDbContext())
             {
                 PasswordHasher hasher = new PasswordHasher();
-                // gets user from the databse established on student number provided
+                // gets user from the databse established on the email provided
                 var user = await dbContext.Users.Where(u => u.Email.Equals(userObj.Email) && u.Role.Equals("employee")).FirstOrDefaultAsync();
 
                 if (user == null)
@@ -306,10 +296,9 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                     ViewBag.Message = "User already registered. Login instead";
                 }
             }
-
             return View(userObj);
         }
-
+        //--------------------------------------------------------------------------------------//
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddFarmer(User userObj)
@@ -324,7 +313,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             using (AgriDbContext dbContext = new AgriDbContext())
             {
                 PasswordHasher hasher = new PasswordHasher();
-                // gets user from the databse established on student number provided
+                // gets user from the databse established on the email provided
                 var user = await dbContext.Users.Where(u => u.Email.Equals(userObj.Email) && u.Role.Equals("farmer")).FirstOrDefaultAsync();
 
                 if (user == null)
@@ -345,46 +334,38 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                     ViewBag.Message = "Farmer already registered. Login instead";
                 }
             }
-
             return View(userObj);
         }
-
         //--------------------------------------------------------------------------------------//
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddProduct(Product productObj)
-        {
-            // Error handling to make sure the fields are filled out    
+        {           
             var userId = HttpContext.Session.GetString("UserId");
-
+            // Error handling to make sure the fields are filled out and a date is picked 
             if (string.IsNullOrEmpty(productObj.Name) || string.IsNullOrEmpty(productObj.Category) || userId == null || productObj.ProductDate.Year <= 1731)
             {
-                ViewBag.Message = "Please make sure both fields are filled out";
+                ViewBag.Message = "Please make sure both fields are filled out and a date is picked";
                 ViewBag.Categories = ProductCategories.items;
                 return View(productObj);
             }
-
-
             //intercats with database using dbcontext
             using (AgriDbContext dbContext = new AgriDbContext())
             {
-
                 productObj.UserId = Int32.Parse(userId);
                 //adds to database
                 await dbContext.Products.AddAsync(productObj);
                 await dbContext.SaveChangesAsync();
 
-                return RedirectToAction("FarmerDashboard");
-                
+                return RedirectToAction("FarmerDashboard");      
             }
-
         }
         //--------------------------------------------------------------------------------------//
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> LoginEmployee(User userObj)
         {
-            //This makes sure that the student number and password fields are filled out 
+            //This makes sure that the email and password fields are filled out 
             if (string.IsNullOrEmpty(userObj.Email) || string.IsNullOrEmpty(userObj.Password))
             {
                 ViewBag.Message = "Please make sure both fields are filled out!";
@@ -394,7 +375,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             using (AgriDbContext dbContext = new AgriDbContext())
             {
                 PasswordHasher hasher = new PasswordHasher();
-                //gets user from the database that correspnds with student number
+                //gets user from the database that correspnds with the email
                 var user = await dbContext.Users.Where(u => u.Email.Equals(userObj.Email) && u.Role.Equals("employee")).FirstOrDefaultAsync();
 
                 if (user != null)
@@ -404,13 +385,13 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                     {
                         //sets userId in the session
                         HttpContext.Session.SetString("UserId", user.UserId.ToString());
-                        //once user is logged in this will go to the index page 
+                        //once user is logged in this will go to the employee dashboard 
                         return RedirectToAction("EmployeeDashboard");
                     }
                     else
                     {
-                        //error shown if student number and password does not match 
-                        ViewBag.Message = "Student number and password does not match";
+                        //error shown if email and password does not match 
+                        ViewBag.Message = "Email and password do not match";
                     }
                 }
                 else
@@ -419,15 +400,14 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                     ViewBag.Message = "User not registered";
                 }
             }
-
             return View(userObj);
         }
-
+        //--------------------------------------------------------------------------------------//
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> LoginFarmer(User userObj)
         {
-            //This makes sure that the student number and password fields are filled out 
+            //This makes sure that the email and password fields are filled out 
             if (string.IsNullOrEmpty(userObj.Email) || string.IsNullOrEmpty(userObj.Password))
             {
                 ViewBag.Message = "Please make sure both fields are filled out!";
@@ -437,7 +417,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             using (AgriDbContext dbContext = new AgriDbContext())
             {
                 PasswordHasher hasher = new PasswordHasher();
-                //gets user from the database that correspnds with student number
+                //gets user from the database that correspnds with the email
                 var user = await dbContext.Users.Where(u => u.Email.Equals(userObj.Email) && u.Role.Equals("farmer")).FirstOrDefaultAsync();
 
                 if (user != null)
@@ -447,13 +427,13 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                     {
                         //sets userId in the session
                         HttpContext.Session.SetString("UserId", user.UserId.ToString());
-                        //once user is logged in this will go to the index page 
+                        //once user is logged in this will go to the farmer dashboard  
                         return RedirectToAction("FarmerDashboard");
                     }
                     else
                     {
-                        //error shown if student number and password does not match 
-                        ViewBag.Message = "Student number and password does not match";
+                        //error shown if email and password does not match 
+                        ViewBag.Message = "Email and password do not match";
                     }
                 }
                 else
@@ -465,7 +445,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
 
             return View(userObj);
         }
-
+        //--------------------------------------------------------------------------------------//
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -473,3 +453,4 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
         }
     }
 }
+//---------------------------------End of FIle-----------------------------------------------------//

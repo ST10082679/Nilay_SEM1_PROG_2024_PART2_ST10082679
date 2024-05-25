@@ -9,68 +9,96 @@
 <button onclick="location.href='@Url.Action("AddProduct", "Home")'">Add Product</button>
 
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        background-color: #f0f0f0;
-    }
+   body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #ffffff;
+    color: #333333;
+}
 
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+button {
+    padding: 10px 15px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #004494;
+}
+
+h1 {
+    text-align: center;
+    color: #0056b3;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #0056b3;
+    color: white;
+}
+
+a {
+    color: #0056b3;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.message {
+    border: 1px solid #dc3545;
+    padding: 15px;
+    margin-top: 20px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border-radius: 5px;
+}
+
+@@media (max-width: 600px) {
     .container {
-        max-width: 800px;
-        margin: 0 auto;
+        padding: 10px;
     }
 
     button {
-        padding: 5px;
-        background-color: #008CBA;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-        button:hover {
-            background-color: #0077A3;
-        }
-
-    h1 {
-        text-align: center;
-        color: #008CBA;
-    }
-
-    table {
         width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
+        padding: 10px;
     }
 
     th, td {
         padding: 10px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
     }
-
-    th {
-        background-color: #008CBA;
-        color: white;
-    }
-
-    a {
-        color: #008CBA;
-        text-decoration: none;
-        font-weight: bold;
-    }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-    .message {
-        border: 1px solid red;
-        padding: 10px;
-        margin-top: 10px;
-        color: red;
-    }
+}
 </style>
 
 <div class="text-center">

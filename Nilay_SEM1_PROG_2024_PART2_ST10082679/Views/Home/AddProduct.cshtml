@@ -7,70 +7,111 @@
 
 <button onclick="location.href='@Url.Action("FarmerDashboard", "Home")'">Back to dashboard</button>
 
-
-
 <style>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #ffffff;
+    color: #333333;
+}
+
+fieldset {
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 30px;
+    border: 1px solid #333333;
+    border-radius: 8px;
+    background-color: #000000;
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+legend {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    margin-top: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #dddddd;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #333333;
+    color: #ffffff;
+}
+
+input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    padding: 12px;
+    width: 100%;
+}
+
+input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+button {
+    margin-top: 10px;
+    padding: 12px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #004494;
+}
+
+@@media (max-width: 600px) {
     body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        background-color: #f0f0f0;
+        padding: 10px;
     }
 
     fieldset {
-        width: 700px;
-        margin: 20px auto;
+        width: 100%;
         padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        background-color: #fff;
+        margin: 10px 0;
+    }
+
+    input, button {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
     }
 
     legend {
         font-size: 1.2em;
-        font-weight: bold;
-        color: #008CBA;
     }
 
     label {
-        display: block;
-        margin-bottom: 8px;
-        color: #008CBA;
+        font-size: 14px;
     }
-
-    input {
-        width: 100%;
-        padding: 10px;
-        box-sizing: border-box;
-        margin-top: 8px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
-
-        input[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-            input[type="submit"]:hover {
-                background-color: #45a049;
-            }
-
-    button {
-        margin-top: 10px;
-        padding: 10px;
-        background-color: #008CBA;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-        button:hover {
-            background-color: #0077A3;
-        }
+}
 </style>
 
 @using (Html.BeginForm("AddProduct", "Home", FormMethod.Post))
@@ -87,8 +128,6 @@
                 @ViewBag.Message
             </p>
         }
-
-        
 
         <table>
 
