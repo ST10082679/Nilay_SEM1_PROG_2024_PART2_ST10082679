@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Nilay_SEM1_PROG_2024_PART2_ST10082679.Models;
 
 namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Context;
 
 public partial class AgriDbContext : DbContext
+    
 {
+
     public AgriDbContext()
     {
     }
@@ -14,6 +17,7 @@ public partial class AgriDbContext : DbContext
     public AgriDbContext(DbContextOptions<AgriDbContext> options)
         : base(options)
     {
+       
     }
 
     public virtual DbSet<Product> Products { get; set; }
@@ -21,8 +25,20 @@ public partial class AgriDbContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=NILAY_SEM1_PART2_PROG;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            // Build the relative path for the database file
+            var relativePath = Path.Combine(Directory.GetCurrentDirectory(), "NILAY_SEM1_PART2_PROG.mdf");
+            // Get the connection string from the configuration
+            var sqlServerName = "(LocalDB)\\MSSQLLocalDB"; // ***** CHANGE TO SUIT YOUR SQL SERVER *****
+            var connectionStringTemplate = "Data Source=|SqlServer|;AttachDbFilename=|DataDirectory|;Integrated Security=True;Connect Timeout=30";
+            var connectionString = connectionStringTemplate.Replace("|SqlServer|", sqlServerName)
+                                                  .Replace("|DataDirectory|", relativePath);
+            // Configure the DbContext to use SQL Server
+            optionsBuilder.UseSqlServer(connectionString);
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
