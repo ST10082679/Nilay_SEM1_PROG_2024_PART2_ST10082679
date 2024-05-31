@@ -35,7 +35,6 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                     {
                         return RedirectToAction("FarmerDashboard");
                     }
-
                     var farmers = await dbContext.Users.Where(s => s.Role.Equals("farmer")).ToListAsync();
 
                     return View(farmers);
@@ -159,7 +158,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             {
                 HttpContext.Session.Remove("EndDate");
             }
-            //goes to the semester dashboard with updated semesterId
+            //goes to the employee farmer dashboard with updated farmer user id
             return RedirectToAction("EmployeeFarmerView", new { Id = farmerUserId });
         }
         //--------------------------------------------------------------------------------------//
@@ -261,6 +260,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             return View();
         }
         //--------------------------------------------------------------------------------------//
+        //Employee Login
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(User userObj)
@@ -299,6 +299,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             return View(userObj);
         }
         //--------------------------------------------------------------------------------------//
+        //Employee to add a farmer
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddFarmer(User userObj)
@@ -337,6 +338,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             return View(userObj);
         }
         //--------------------------------------------------------------------------------------//
+        //Add Product 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddProduct(Product productObj)
@@ -361,6 +363,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             }
         }
         //--------------------------------------------------------------------------------------//
+        //Employee login
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> LoginEmployee(User userObj)
@@ -403,6 +406,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             return View(userObj);
         }
         //--------------------------------------------------------------------------------------//
+        //Farmer Login
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> LoginFarmer(User userObj)

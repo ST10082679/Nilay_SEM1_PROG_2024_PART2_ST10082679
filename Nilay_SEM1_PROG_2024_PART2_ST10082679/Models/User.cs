@@ -19,3 +19,4 @@ public partial class User
 
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }
+//---------------------------------End of FIle-----------------------------------------------------//

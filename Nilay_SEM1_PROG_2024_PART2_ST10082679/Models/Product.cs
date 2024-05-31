@@ -17,3 +17,4 @@ public partial class Product
 
     public virtual User User { get; set; } = null!;
 }
+//---------------------------------End of FIle-----------------------------------------------------//

@@ -31,7 +31,7 @@ public partial class AgriDbContext : DbContext
             // Build the relative path for the database file
             var relativePath = Path.Combine(Directory.GetCurrentDirectory(), "NILAY_SEM1_PART2_PROG.mdf");
             // Get the connection string from the configuration
-            var sqlServerName = "(LocalDB)\\MSSQLLocalDB"; // ***** CHANGE TO SUIT YOUR SQL SERVER *****
+            var sqlServerName = "(LocalDB)\\MSSQLLocalDB"; // ***** CHANGE TO SUIT YOUR SQL SERVER ***** //
             var connectionStringTemplate = "Data Source=|SqlServer|;AttachDbFilename=|DataDirectory|;Integrated Security=True;Connect Timeout=30";
             var connectionString = connectionStringTemplate.Replace("|SqlServer|", sqlServerName)
                                                   .Replace("|DataDirectory|", relativePath);
@@ -88,6 +88,5 @@ public partial class AgriDbContext : DbContext
 
         OnModelCreatingPartial(modelBuilder);
     }
-
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
