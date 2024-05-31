@@ -6,20 +6,16 @@ using Nilay_SEM1_PROG_2024_PART2_ST10082679.Models;
 
 namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Context;
 
-public partial class AgriDbContext : DbContext
-    
+public partial class AgriDbContext : DbContext  
 {
-
     public AgriDbContext()
     {
     }
-
     public AgriDbContext(DbContextOptions<AgriDbContext> options)
         : base(options)
     {
        
     }
-
     public virtual DbSet<Product> Products { get; set; }
 
     public virtual DbSet<User> Users { get; set; }

@@ -19,6 +19,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             _logger = logger;
         }
         //--------------------------------------------------------------------------------------//
+        //Method that handles the Employeedashboard
         public async Task<IActionResult> EmployeeDashboard()
         {
             //gets userId from the session 
@@ -46,6 +47,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             }
         }
         //--------------------------------------------------------------------------------------//
+        //Method that handles the farmerdashboard 
         public async Task<IActionResult> FarmerDashboard()
         {
             //gets userId from the session 
@@ -53,8 +55,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
 
             //checks if user is logged in
             if (userId != null)
-            {
-               
+            {      
                 using (AgriDbContext dbContext = new AgriDbContext())
                 {
                     // check role access
@@ -75,9 +76,10 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             }
         }
         //--------------------------------------------------------------------------------------//
+        //Method that handles the employeefarmerview
         public async Task<IActionResult> EmployeeFarmerView(int id)
         {
-            //gets userId from the session 
+            //gets userId from the session then sets farmeruserid in session
             var userId = HttpContext.Session.GetString("UserId");
             HttpContext.Session.SetString("FarmerUserId", id.ToString());
             ViewBag.Categories = ProductCategories.items;
@@ -93,11 +95,12 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                 {
                     // check role access
                     var userIsEmployee = await dbContext.Users.Where(s => s.UserId == Int32.Parse(userId) && s.Role.Equals("employee")).FirstOrDefaultAsync();
+                    //if user is not an employee it will redirect to the farmer dashboard 
                     if (userIsEmployee == null)
                     {
                         return RedirectToAction("FarmerDashboard");
                     }
-
+                    //initialises query to get products for specified id
                     var query = dbContext.Products.Where(s => s.UserId == id);
 
                     if (category != null)
@@ -109,12 +112,13 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
                     {
                         var parsedStartDate = DateTime.Parse(startDate);
                         var parsedEndDate = DateTime.Parse(endDate);
-
+                        //ensures the start date is before the end date 
                         if (parsedStartDate < parsedEndDate)
                         {
                             query = query.Where(s => s.ProductDate > parsedStartDate && s.ProductDate < parsedEndDate);
                         }
                     }
+                    //gets list of products
                     var products = await query.ToListAsync();
                     return View(products);
                 }
@@ -125,12 +129,12 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             }
         }
         //--------------------------------------------------------------------------------------//
+        //Method that handles the filtering options by category, start and end date 
         public IActionResult FilterTable(string Category, DateTime StartDate, DateTime EndDate)
         {
-            //gets semesterId from session
+            //gets farmerUserId from session
             var farmerUserId = HttpContext.Session.GetString("FarmerUserId");
             ViewBag.Categories = ProductCategories.items;
-            //sets the week numer in the session
 
             if (Category != null)
             {
@@ -162,6 +166,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             return RedirectToAction("EmployeeFarmerView", new { Id = farmerUserId });
         }
         //--------------------------------------------------------------------------------------//
+        //Method that handles the adding of a farmer 
         public async Task<IActionResult> AddFarmer()
         {
             //gets userId from the session 
@@ -171,6 +176,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             {
                 // check role access
                 var userIsEmployee = await dbContext.Users.Where(s => s.UserId == Int32.Parse(userId) && s.Role.Equals("employee")).FirstOrDefaultAsync();
+                //if the user is not an employee then it will redirect to the farmerdashboard 
                 if (userIsEmployee == null)
                 {
                     return RedirectToAction("FarmerDashboard");
@@ -187,6 +193,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             }
         }
         //--------------------------------------------------------------------------------------//
+        //Method that handles the adding of a product
         public async Task<IActionResult> AddProduct()
         {
             //gets userId from the session 
@@ -197,6 +204,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             {
                 // check role access
                 var userIsFarmer = await dbContext.Users.Where(s => s.UserId == Int32.Parse(userId) && s.Role.Equals("farmer")).FirstOrDefaultAsync();
+                //if the user is not a farmer then it will redirect to the employeedashboard
                 if (userIsFarmer == null)
                 {
                     return RedirectToAction("EmployeeDashboard");
@@ -213,6 +221,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             }
         }
         //--------------------------------------------------------------------------------------//
+        //Method that handles the registration
         public IActionResult Register()
         { 
             if (HttpContext.Session.GetString("UserId") == null)
@@ -225,6 +234,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             }
         }
         //--------------------------------------------------------------------------------------//
+        //Method that handles the employee login
         public IActionResult LoginEmployee()
         {
             if (HttpContext.Session.GetString("UserId") == null)
@@ -237,6 +247,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             }
         }
         //--------------------------------------------------------------------------------------//
+        //Method that handles the farmer login
         public IActionResult LoginFarmer()
         {
             if (HttpContext.Session.GetString("UserId") == null)
@@ -249,6 +260,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             }
         }
         //--------------------------------------------------------------------------------------//
+        //Method that handles the logging out for employee
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
@@ -260,7 +272,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             return View();
         }
         //--------------------------------------------------------------------------------------//
-        //Employee Login
+        //Post method to register 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(User userObj)
@@ -299,7 +311,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             return View(userObj);
         }
         //--------------------------------------------------------------------------------------//
-        //Employee to add a farmer
+        //Post method to add a farmer 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddFarmer(User userObj)
@@ -338,7 +350,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             return View(userObj);
         }
         //--------------------------------------------------------------------------------------//
-        //Add Product 
+        //Post method to add a product 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddProduct(Product productObj)
@@ -363,7 +375,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             }
         }
         //--------------------------------------------------------------------------------------//
-        //Employee login
+        //Post method to login employee
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> LoginEmployee(User userObj)
@@ -406,7 +418,7 @@ namespace Nilay_SEM1_PROG_2024_PART2_ST10082679.Controllers
             return View(userObj);
         }
         //--------------------------------------------------------------------------------------//
-        //Farmer Login
+        //Post method to login farmer 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> LoginFarmer(User userObj)
